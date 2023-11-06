@@ -168,7 +168,7 @@ config:
         Time_Key  time
         Time_Format %b %d %H:%M:%S
 
-      [PARSER]
+    [PARSER]
         Name binarios_multiline
         Format regex
         Regex /(?<date>\d{4}-\d{2}-\d{2})\s*\s*(?<time>\d{2}:\d{2}:\d{2}\.\d{3})\s+(?<level>[^\s]+)\s+(?<pid>\d+).?\s*---\s*\[(?<thread>[^\]]+)]\s*(?<class>.*)\s:\s+(?<message>.*)/
