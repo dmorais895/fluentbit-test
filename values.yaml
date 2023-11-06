@@ -88,24 +88,12 @@ config:
   inputs: |
     [INPUT]
         Name tail
-        Path /var/log/containers/*_homologacao_*.log, /var/log/containers/*_pos-homologacao_*.log
+        Path /var/log/containers/*_pje-binarios-standalone_*.log
         Parser json
         Tag kube.*
         Read_from_head true
         Multiline On
-        Parser_Firstline multiline
-        Mem_Buf_Limit 50MB
-        Skip_Long_Lines Off
-        Skip_Empty_Lines On
-
-    [INPUT]
-        Name tail
-        Path /var/log/containers/*_homologacao_*.log, /var/log/containers/*_pos-homologacao_*.log
-        Parser json
-        Tag kube.*
-        Read_from_head true
-        Multiline On
-        Parser_Firstline multiline
+        Parser_Firstline binarios_multiline
         Mem_Buf_Limit 50MB
         Skip_Long_Lines Off
         Skip_Empty_Lines On
@@ -123,17 +111,6 @@ config:
         Keep_Log Off
         K8S-Logging.Parser On
         K8S-Logging.Exclude On
-
-    # [FILTER]
-    #     Name           lua
-    #     Match          kube.*
-    #     call remove_dummy
-    #     Script /fluent-bit/scripts/remove_dummy.lua        
-
-    # [FILTER]
-    #     Name  modify
-    #     Match kube.*
-    #     Rename  message log
 
   ## https://docs.fluentbit.io/manual/pipeline/outputs
   outputs: |
@@ -194,6 +171,6 @@ config:
       [PARSER]
         Name binarios_multiline
         Format regex
-        Regex /(?<date>\d{4}-\d{2}-\d{2})\s*\s*(?<timestamp>\d{2}:\d{2}:\d{2}\.\d{3})\s*(?<level>INFO|ERROR|WARN|WARNING|TRACE|DEBUG|FATAL|SEVERE)\s*.?\s*---\s*\[(?<thread>[^\]]+)]\s*(?<class>.*:)\s*(?<message>.*)/
+        Regex /(?<date>\d{4}-\d{2}-\d{2})\s*\s*(?<time>\d{2}:\d{2}:\d{2}\.\d{3})\s+(?<level>[^\s]+)\s+(?<pid>\d+).?\s*---\s*\[(?<thread>[^\]]+)]\s*(?<class>.*)\s:\s+(?<message>.*)/
         Time_Key  time
         Time_Format %b %d %H:%M:%S
