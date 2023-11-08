@@ -77,7 +77,7 @@ config:
         Daemon Off
         Flush {{ .Values.flush }}
         Log_Level {{ .Values.logLevel }}
-        # Parsers_File /fluent-bit/etc/parsers.conf
+        Parsers_File /fluent-bit/etc/parsers.conf
         Parsers_File /fluent-bit/etc/conf/custom_parsers.conf
         HTTP_Server On
         HTTP_Listen 0.0.0.0
@@ -88,12 +88,24 @@ config:
   inputs: |
     [INPUT]
         Name tail
-        Path /var/log/containers/*_pje-binarios-standalone_*.log
+        Path /var/log/containers/pje1g-*.log, /var/log/containers/pje2g-*.log
         Parser json
+        Multiline On
+        Parser_Firstline multiline
         Tag kube.*
         Read_from_head true
+        Mem_Buf_Limit 50MB
+        Skip_Long_Lines Off
+        Skip_Empty_Lines On
+
+    [INPUT]
+        Name tail
+        Path /var/log/containers/pje-binarios-standalone-*.log
+        Parser json
         Multiline On
         Parser_Firstline binarios_multiline
+        Tag kube.*
+        Read_from_head true
         Mem_Buf_Limit 50MB
         Skip_Long_Lines Off
         Skip_Empty_Lines On
@@ -173,4 +185,4 @@ config:
         Format regex
         Regex /(?<date>\d{4}-\d{2}-\d{2})\s*\s*(?<time>\d{2}:\d{2}:\d{2}\.\d{3})\s+(?<level>[^\s]+)\s+(?<pid>\d+).?\s*---\s*\[(?<thread>[^\]]+)]\s*(?<class>.*)\s:\s+(?<message>.*)/
         Time_Key  time
-        Time_Format %b %d %H:%M:%S
+        Time_Format %H:%M:%S
